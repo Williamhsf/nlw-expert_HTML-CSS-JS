@@ -94,6 +94,15 @@ const perguntas = [
 const quiz = document.querySelector('#quiz');
 const template = document.querySelector('template');
 
+// somando os acertos sem repetir o que tem dentro
+const corretas = new Set();
+const totalDePerguntas = perguntas.length; // total de 10
+
+// concatenando o texto na span
+const mostrarTotal = document.querySelector('#acertos span');
+mostrarTotal.textContent = corretas.size + ' de ' + totalDePerguntas;
+                  // <span>      0           de            10         </span>
+
 // loop ou laço de repetição
 for(const item of perguntas) {
   const quizItem = template.content.cloneNode(true);
@@ -105,6 +114,21 @@ for(const item of perguntas) {
     // setAttribute -> precisa do nome que esta no input e seu indice
     // no caso concatenamos 'pergunta-' + perguntas.indexOf(item))
     dt.querySelector('input').setAttribute('name', 'pergunta-' + perguntas.indexOf(item));
+    dt.querySelector('input').value = item.respostas.indexOf(resposta);
+    //onchange -> espera que criemos uma funcao onde ele so vai rodar quando tiver mudanca no input
+    dt.querySelector('input').onchange = (event) => {
+      //capturando o alvo dos indices e comparando para ver se esta correto\
+      const estaCorreta = event.target.value == item.correta;
+
+      corretas.delete(item);
+      if(estaCorreta) {
+        corretas.add(item);
+      }
+
+      // jogando na DOM o resultado
+      mostrarTotal.textContent = corretas.size + ' de ' + totalDePerguntas;
+    };
+
 
     quizItem.querySelector('dl').appendChild(dt);
 
